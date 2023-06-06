@@ -1,9 +1,12 @@
-package netWorkConnectionTestServer
+package main
 
 import (
 	"NetWorkConnectionTest/internal"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
+	"io"
+	"os"
 )
 
 func main() {
@@ -37,4 +40,13 @@ func main() {
 
 	// 启动服务
 	e.Logger.Fatal(e.Start(":8080"))
+}
+
+func configLogger(e *echo.Echo) {
+	e.Logger.SetLevel(log.INFO)
+	echoLog, err := os.OpenFile("networkconnectiontestserver.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	e.Logger.SetOutput(io.MultiWriter(os.Stdout, echoLog))
 }

@@ -1,12 +1,13 @@
-package log
+package logger
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
-	"github.com/rs/zerolog"
 	"io"
 	"path/filepath"
 	"strconv"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
+	"github.com/rs/zerolog"
 )
 
 var logDefaultHeader = map[string]string{
@@ -49,7 +50,6 @@ func (l *Logger) SetOutput(writer io.Writer) {
 	l.ZeroLog.Output(writer)
 }
 
-// SetLevel 设置日志级别
 func (l *Logger) SetLevel(level log.Lvl) {
 	l.Logger.SetLevel(level)
 	if level == log.OFF {

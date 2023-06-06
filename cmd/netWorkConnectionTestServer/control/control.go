@@ -1,43 +1,49 @@
 package control
 
 import (
+	"errors"
 	"github.com/labstack/echo/v4"
-	"strconv"
 )
 
 const (
-	TCP  int = 1
-	UDP  int = 2
-	ICMP int = 3
+	TCP  string = "TCP"
+	UDP  string = "UDP"
+	ICMP string = "ICMP"
 )
 
 type SetServiceRequest struct {
-	protocol int
-	port     int
+	Protocol string `json:"protocol"`
+	Port     string `json:"port"`
 }
 
-// 解析Context转为SetService请求体
-func ParseSetServiceRequest(c echo.Context) (*SetServiceRequest, error) {
-	var setServiceREQ *SetServiceRequest = new(SetServiceRequest)
-	var err error
-	setServiceREQ.protocol, err = strconv.Atoi(c.Param("protocol"))
-	if err == nil {
-		setServiceREQ.port, err = strconv.Atoi(c.Param("port"))
-		if err == nil {
-			return setServiceREQ, err
-		}
-	}
-	return nil, err
-}
+// ParseSetServiceRequest 解析Context转为SetService请求体
+//func ParseSetServiceRequest(c echo.Context) (*SetServiceRequest, error) {
+//	var setServiceREQ *SetServiceRequest = new(SetServiceRequest)
+//	var err error
+//	setServiceREQ.protocol, err = strconv.Atoi(c.Param("protocol"))
+//	if err == nil {
+//		setServiceREQ.port, err = strconv.Atoi(c.Param("port"))
+//		if err == nil {
+//			return setServiceREQ, err
+//		}
+//	}
+//	return nil, err
+//}
 
-func SetService(c echo.Context) error {
-	setServiceReuqest, err := ParseSetServiceRequest(c)
-	if err != nil {
+func SetService(ctx echo.Context) error {
+	setServiceRequest := new(SetServiceRequest)
+	if err := ctx.Bind(setServiceRequest); err != nil {
 		return err
 	}
-	switch setServiceReuqest.protocol {
-	case TCP:
 
+	switch setServiceRequest.Protocol {
+	case TCP:
+		return TCPServiceSet(ctx, setServiceRequest.Port)
+	case UDP:
+		return nil
+	case ICMP:
+		return nil
+	default:
+		return errors.New("[error] Protocol error in request : " + setServiceRequest.Protocol)
 	}
-	return nil
 }

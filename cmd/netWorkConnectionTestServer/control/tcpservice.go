@@ -1,31 +1,40 @@
 package control
 
 import (
-	"fmt"
+	"errors"
 	"github.com/labstack/echo/v4"
 	"net"
+	"strconv"
 	"time"
 )
 
-func TCPServiceSet(c echo.Context, port int) error {
-
+func TCPServiceSet(ctx echo.Context, port string) error {
+	postValue, err := strconv.Atoi(port)
+	if err != nil {
+		ctx.Logger().Error("Port resolution failure")
+		return err
+	}
+	if err = checkPorts(ctx, port); err != nil {
+		return err
+	}
+	ctx.Logger().Infof("Listening on TCP post：%d", postValue)
+	return nil
 }
 
-func checkPorts(ipPorts []string) {
-	//now := time.Now().Format("2006-01-02 15:04:05")
-	for _, ipPort := range ipPorts {
-		// 检测端口
-		conn, err := net.DialTimeout("tcp", ipPort, 3*time.Second)
-		if err != nil {
-			//fmt.Println("["+now+"]", ipPort, "端口未开启(fail)!")
-			echo.Logger("")
+func checkPorts(ctx echo.Context, ipPort string) error {
+	conn, err := net.DialTimeout("tcp", ipPort, 3*time.Second)
+	if err != nil {
+		ctx.Logger().Info(ipPort, "端口未开启(fail)!")
+		return err
+	} else {
+		if conn != nil {
+			ctx.Logger().Error(ipPort, "端口已开启(success)!")
+			conn.Close()
+			return errors.New("the port is occupied")
 		} else {
-			if conn != nil {
-				fmt.Println("["+now+"]", ipPort, "端口已开启(success)!")
-				conn.Close()
-			} else {
-				fmt.Println("["+now+"]", ipPort, "端口未开启(fail)!")
-			}
+			ctx.Logger().Info(ipPort, "端口未开启(fail)!")
+			return nil
 		}
 	}
+
 }
