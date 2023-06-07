@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"NetWorkConnectionTest/cmd/netWorkConnectionTestServer/controller"
+	"NetWorkConnectionTest/cmd/networkconnectiontestserver/controller"
 	"github.com/labstack/echo/v4"
 )
 

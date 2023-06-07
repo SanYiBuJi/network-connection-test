@@ -1,8 +1,8 @@
 package main
 
 import (
-	"NetWorkConnectionTest/cmd/netWorkConnectionTestServer/handlerfunc"
-	"NetWorkConnectionTest/cmd/netWorkConnectionTestServer/routers"
+	"NetWorkConnectionTest/cmd/networkconnectiontestserver/handlerfunc"
+	"NetWorkConnectionTest/cmd/networkconnectiontestserver/routers"
 	"NetWorkConnectionTest/internal"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
