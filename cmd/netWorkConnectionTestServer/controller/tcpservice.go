@@ -1,4 +1,4 @@
-package control
+package controller
 
 import (
 	"errors"
@@ -24,8 +24,8 @@ func TCPServiceSet(ctx echo.Context, port string) error {
 func checkPorts(ctx echo.Context, ipPort string) error {
 	conn, err := net.DialTimeout("tcp", ipPort, 3*time.Second)
 	if err != nil {
-		ctx.Logger().Info(ipPort, "端口未开启(fail)!")
-		return err
+		ctx.Logger().Info(ipPort, "-连接探测失败，端口未开启(fail)!")
+		return nil
 	} else {
 		if conn != nil {
 			ctx.Logger().Error(ipPort, "端口已开启(success)!")

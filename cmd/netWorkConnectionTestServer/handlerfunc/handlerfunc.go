@@ -1,5 +1,11 @@
 package handlerfunc
 
+import (
+	"bytes"
+	"github.com/labstack/echo/v4"
+	"io/ioutil"
+)
+
 // 日志中间件
 //func logger(next echo.HandlerFunc) echo.HandlerFunc {
 //	return func(ctx echo.Context) error {
@@ -18,3 +24,18 @@ package handlerfunc
 //		return nil
 //	}
 //}
+
+func PrintRequestInfo(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		req := ctx.Request()
+		//ctx.Logger().Info("Request: %s", req.Body)
+		if req.Body != nil {
+			body, err := ioutil.ReadAll(req.Body)
+			if err == nil {
+				ctx.Logger().Info("Request body: %s", string(body))
+			}
+			req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		}
+		return next(ctx)
+	}
+}

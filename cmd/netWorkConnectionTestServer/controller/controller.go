@@ -1,4 +1,4 @@
-package control
+package controller
 
 import (
 	"errors"
@@ -15,20 +15,6 @@ type SetServiceRequest struct {
 	Protocol string `json:"protocol"`
 	Port     string `json:"port"`
 }
-
-// ParseSetServiceRequest 解析Context转为SetService请求体
-//func ParseSetServiceRequest(c echo.Context) (*SetServiceRequest, error) {
-//	var setServiceREQ *SetServiceRequest = new(SetServiceRequest)
-//	var err error
-//	setServiceREQ.protocol, err = strconv.Atoi(c.Param("protocol"))
-//	if err == nil {
-//		setServiceREQ.port, err = strconv.Atoi(c.Param("port"))
-//		if err == nil {
-//			return setServiceREQ, err
-//		}
-//	}
-//	return nil, err
-//}
 
 func SetService(ctx echo.Context) error {
 	setServiceRequest := new(SetServiceRequest)

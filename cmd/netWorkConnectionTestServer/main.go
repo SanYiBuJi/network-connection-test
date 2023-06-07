@@ -1,6 +1,8 @@
 package main
 
 import (
+	"NetWorkConnectionTest/cmd/netWorkConnectionTestServer/handlerfunc"
+	"NetWorkConnectionTest/cmd/netWorkConnectionTestServer/routers"
 	"NetWorkConnectionTest/internal"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -17,16 +19,19 @@ func main() {
 	e := echo.New()
 
 	// 添加中间件
+	configLogger(e)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(handlerfunc.PrintRequestInfo)
 
 	// 设置开启指定协议端口监听
-	e.POST("/set/post", func(c echo.Context) error {
-		key := c.FormValue("key")
-		value := c.FormValue("value")
-		dataCache.Set(key, value)
-		return c.String(200, "OK")
-	})
+	//e.POST("/set/port", func(c echo.Context) error {
+	//	//key := c.FormValue("key")
+	//	//value := c.FormValue("value")
+	//	//dataCache.Set(key, value)
+	//	return c.String(200, "OK")
+	//})
+	routers.SetRoutersTable(e)
 
 	// 获取一个数据
 	e.GET("/get", func(c echo.Context) error {
@@ -39,7 +44,7 @@ func main() {
 	})
 
 	// 启动服务
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":80"))
 }
 
 func configLogger(e *echo.Echo) {
