@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net"
 	"strconv"
@@ -18,7 +19,7 @@ func TCPServiceSet(ctx echo.Context, port string) error {
 		return err
 	}
 	ctx.Logger().Infof("Listening on TCP post：%d", postValue)
-	return nil
+	return listenerTCPPort(ctx, port)
 }
 
 func checkPorts(ctx echo.Context, ipPort string) error {
@@ -36,5 +37,34 @@ func checkPorts(ctx echo.Context, ipPort string) error {
 			return nil
 		}
 	}
+}
 
+func listenerTCPPort(ctx echo.Context, port string) error {
+	listener, err := net.Listen("tcp", "0.0.0.0:"+port)
+	if err != nil {
+		ctx.Logger().Error("开启端口监听失败：", err.Error())
+	}
+	defer listener.Close()
+	ctx.Logger().Info("Listening on 0.0.0.0:", port)
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			ctx.Logger().Error("ERROR accenting : ", err.Error())
+			return err
+		}
+		go handleConnection(ctx, conn)
+	}
+}
+
+func handleConnection(ctx echo.Context, conn net.Conn) {
+	buffer := make([]byte, 1024)
+	length, err := conn.Read(buffer)
+	if err != nil {
+		ctx.Logger().Error("解析client请求失败：", err.Error())
+		return
+	}
+	fmt.Println("Info : ", string(buffer[:length]))
+
+	conn.Write([]byte("200"))
+	conn.Close()
 }
